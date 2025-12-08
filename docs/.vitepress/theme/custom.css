@@ -1,0 +1,32 @@
+/* 文档站点自定义样式 */
+:root {
+  --vp-c-brand: #409eff;
+  --vp-c-brand-light: #53a8ff;
+  --vp-c-brand-lighter: #66b1ff;
+  --vp-c-brand-dark: #337ecc;
+  --vp-c-brand-darker: #2664a6;
+}
+
+/* 组件演示容器 */
+.demo-container {
+  padding: 24px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.demo-container + .language-vue {
+  margin-top: 8px;
+}
+
+/* 组件示例间距 */
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.demo-row:last-child {
+  margin-bottom: 0;
+}

@@ -1,0 +1,58 @@
+{
+  "name": "tml-ui",
+  "version": "0.1.0",
+  "description": "A Vue 3 Component Library built with TypeScript",
+  "type": "module",
+  "main": "./dist/tml-ui.umd.js",
+  "module": "./dist/tml-ui.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/tml-ui.es.js",
+      "require": "./dist/tml-ui.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "coverage": "vitest run --coverage",
+    "format": "prettier --write src/",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "^3.3.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/test-utils": "^2.4.3",
+    "happy-dom": "^12.10.3",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.7.0",
+    "vitepress": "^1.0.0-rc.35",
+    "vitest": "^1.1.0",
+    "vue-tsc": "^2.0.0"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "component-library",
+    "ui-library",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT"
+}

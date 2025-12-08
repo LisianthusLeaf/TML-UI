@@ -1,0 +1,54 @@
+/* CSS 变量 */
+:root {
+  /* 颜色 */
+  --tml-color-primary: #409eff;
+  --tml-color-success: #67c23a;
+  --tml-color-warning: #e6a23c;
+  --tml-color-danger: #f56c6c;
+  --tml-color-info: #909399;
+
+  /* 文本颜色 */
+  --tml-text-color-primary: #303133;
+  --tml-text-color-regular: #606266;
+  --tml-text-color-secondary: #909399;
+  --tml-text-color-placeholder: #c0c4cc;
+
+  /* 背景颜色 */
+  --tml-bg-color: #ffffff;
+  --tml-bg-color-page: #f2f3f5;
+  --tml-bg-color-overlay: #ffffff;
+
+  /* 边框颜色 */
+  --tml-border-color: #dcdfe6;
+  --tml-border-color-light: #e4e7ed;
+  --tml-border-color-lighter: #ebeef5;
+  --tml-border-color-extra-light: #f2f6fc;
+
+  /* 阴影 */
+  --tml-box-shadow-base: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  --tml-box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+  /* 圆角 */
+  --tml-border-radius-base: 4px;
+  --tml-border-radius-small: 2px;
+  --tml-border-radius-round: 20px;
+  --tml-border-radius-circle: 50%;
+
+  /* 字体大小 */
+  --tml-font-size-extra-large: 20px;
+  --tml-font-size-large: 18px;
+  --tml-font-size-medium: 16px;
+  --tml-font-size-base: 14px;
+  --tml-font-size-small: 13px;
+  --tml-font-size-extra-small: 12px;
+
+  /* 间距 */
+  --tml-spacing-small: 8px;
+  --tml-spacing-base: 12px;
+  --tml-spacing-large: 16px;
+
+  /* 禁用状态 */
+  --tml-disabled-bg-color: #f5f7fa;
+  --tml-disabled-text-color: #c0c4cc;
+  --tml-disabled-border-color: #e4e7ed;
+}

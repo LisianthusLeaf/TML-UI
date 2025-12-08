@@ -1,0 +1,43 @@
+import { defineConfig } from 'vitepress'
+
+export default defineConfig({
+  title: 'TML UI',
+  description: 'A Vue 3 Component Library built with TypeScript',
+  lang: 'zh-CN',
+  
+  themeConfig: {
+    nav: [
+      { text: '指南', link: '/guide/' },
+      { text: '组件', link: '/components/button' }
+    ],
+
+    sidebar: {
+      '/guide/': [
+        {
+          text: '开始',
+          items: [
+            { text: '介绍', link: '/guide/' },
+            { text: '快速开始', link: '/guide/quick-start' }
+          ]
+        }
+      ],
+      '/components/': [
+        {
+          text: '基础组件',
+          items: [
+            { text: 'Button 按钮', link: '/components/button' }
+          ]
+        }
+      ]
+    },
+
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/yourusername/tml-ui' }
+    ],
+
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2025-present'
+    }
+  }
+})
