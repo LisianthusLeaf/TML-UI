@@ -302,42 +302,182 @@
 
 ### TRow Props
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| gutter | 栅格间距，可以是单个数字（水平间距）或数组（水平和垂直间距） | `number \| [number, number]` | `0` |
-| justify | 水平对齐方式 | `'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between' \| 'space-evenly'` | `'start'` |
-| align | 垂直对齐方式 | `'top' \| 'middle' \| 'bottom' \| 'stretch'` | `'top'` |
-| wrap | 是否自动换行 | `boolean` | `true` |
+| 属性 | 说明 | 类型 | 可选值 | 默认值 | 必填 |
+|------|------|------|--------|--------|------|
+| gutter | 栅格间距，可以是单个数字（水平间距）或数组（水平和垂直间距），单位 px | `number \| [number, number]` | — | `0` | 否 |
+| justify | flex 布局下的水平对齐方式 | `'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between' \| 'space-evenly'` | `start` / `end` / `center` / `space-around` / `space-between` / `space-evenly` | `'start'` | 否 |
+| align | flex 布局下的垂直对齐方式 | `'top' \| 'middle' \| 'bottom' \| 'stretch'` | `top` / `middle` / `bottom` / `stretch` | `'top'` | 否 |
+| wrap | 是否自动换行 | `boolean` | `true` / `false` | `true` | 否 |
 
 ### TCol Props
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| span | 栅格占据的列数（0-24），0 表示隐藏 | `number` | - |
-| offset | 栅格左侧的间隔格数 | `number` | `0` |
-| push | 栅格向右移动格数 | `number` | `0` |
-| pull | 栅格向左移动格数 | `number` | `0` |
-| sm | ≥576px 响应式栅格配置 | `number \| ColConfig` | - |
-| md | ≥768px 响应式栅格配置 | `number \| ColConfig` | - |
-| lg | ≥992px 响应式栅格配置 | `number \| ColConfig` | - |
-| xl | ≥1200px 响应式栅格配置 | `number \| ColConfig` | - |
-| xxl | ≥1600px 响应式栅格配置 | `number \| ColConfig` | - |
+| 属性 | 说明 | 类型 | 可选值 | 默认值 | 必填 |
+|------|------|------|--------|--------|------|
+| span | 栅格占据的列数（0-24），0 表示隐藏该列 | `number` | `0-24` | — | 否 |
+| offset | 栅格左侧的间隔格数 | `number` | `0-24` | `0` | 否 |
+| push | 栅格向右移动格数（使用相对定位） | `number` | `0-24` | `0` | 否 |
+| pull | 栅格向左移动格数（使用相对定位） | `number` | `0-24` | `0` | 否 |
+| sm | ≥576px 响应式栅格配置，可以是 span 数字或完整配置对象 | `number \| ColConfig` | — | — | 否 |
+| md | ≥768px 响应式栅格配置 | `number \| ColConfig` | — | — | 否 |
+| lg | ≥992px 响应式栅格配置 | `number \| ColConfig` | — | — | 否 |
+| xl | ≥1200px 响应式栅格配置 | `number \| ColConfig` | — | — | 否 |
+| xxl | ≥1600px 响应式栅格配置（覆盖至 2160px） | `number \| ColConfig` | — | — | 否 |
 
-### ColConfig
+### TRow Slots
+
+| 插槽名 | 说明 | 子标签 |
+|------|------|--------|
+| default | 行内容，通常包含 `TCol` 组件 | TCol |
+
+### TCol Slots
+
+| 插槽名 | 说明 |
+|------|------|
+| default | 列内容 |
+
+## TypeScript 类型定义
 
 ```typescript
-interface ColConfig {
-  span?: number      // 栅格占据的列数
-  offset?: number    // 左侧间隔格数
-  push?: number      // 向右移动格数
-  pull?: number      // 向左移动格数
+// TRow Props 接口
+export interface RowProps {
+  gutter?: number | [number, number]
+  justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between' | 'space-evenly'
+  align?: 'top' | 'middle' | 'bottom' | 'stretch'
+  wrap?: boolean
 }
+
+// TCol 响应式配置接口
+export interface ColConfig {
+  span?: number      // 栅格占据的列数 (0-24)
+  offset?: number    // 左侧间隔格数 (0-24)
+  push?: number      // 向右移动格数 (0-24)
+  pull?: number      // 向左移动格数 (0-24)
+}
+
+// TCol Props 接口
+export interface ColProps extends ColConfig {
+  sm?: number | ColConfig   // ≥576px
+  md?: number | ColConfig   // ≥768px
+  lg?: number | ColConfig   // ≥992px
+  xl?: number | ColConfig   // ≥1200px
+  xxl?: number | ColConfig  // ≥1600px
+}
+
+// 组件实例类型
+import type { TmlRow, TmlCol } from 'tml-ui'
+```
+
+### 在 TypeScript 中使用
+
+```vue
+<script setup lang="ts">
+import { TmlRow, TmlCol } from 'tml-ui'
+import type { RowProps, ColProps } from 'tml-ui'
+
+// 定义 Row 配置
+const rowConfig: RowProps = {
+  gutter: [16, 8],
+  justify: 'space-between',
+  align: 'middle'
+}
+
+// 定义响应式列配置
+const colConfig: ColProps = {
+  span: 24,
+  sm: 12,
+  md: 8,
+  lg: { span: 6, offset: 0 },
+  xl: { span: 4, push: 1 }
+}
+</script>
+
+<template>
+  <TmlRow v-bind="rowConfig">
+    <TmlCol v-bind="colConfig">
+      响应式列
+    </TmlCol>
+  </TmlRow>
+</template>
 ```
 
 ## 注意事项
 
-1. **24 栏系统**: 确保一行内所有列的 `span` 总和不超过 24
+1. **24 栏系统**: 确保一行内所有列的 `span` 总和不超过 24，超出部分会自动换行
 2. **响应式优先级**: 响应式断点按屏幕宽度从小到大应用，大断点会覆盖小断点的设置
 3. **嵌套栅格**: 嵌套的栅格系统基于父列的宽度重新计算 24 栏
-4. **gutter 间距**: 使用 gutter 时，行会自动添加负 margin，列会添加对应的 padding
+4. **gutter 间距**: 
+   - 使用 gutter 时，`TRow` 会自动添加负 margin，`TCol` 会添加对应的 padding
+   - 数组形式的 gutter 第一个值为水平间距，第二个值为垂直间距
 5. **span 为 0**: 当 `span="0"` 时，列会被隐藏（`display: none`）
+6. **push 和 pull**: 使用相对定位实现，不影响其他列的位置，只改变视觉顺序
+7. **offset**: 使用 margin 实现，会影响后续列的位置
+
+## 最佳实践
+
+### 1. 响应式设计模式
+
+```vue
+<template>
+  <!-- 移动端单列，平板双列，桌面三列 -->
+  <TRow :gutter="16">
+    <TCol 
+      v-for="item in items" 
+      :key="item.id"
+      :span="24"
+      :md="12"
+      :lg="8"
+    >
+      <div class="card">{{ item.content }}</div>
+    </TCol>
+  </TRow>
+</template>
+```
+
+### 2. 常见布局组合
+
+```vue
+<template>
+  <!-- 头部-内容-底部布局 -->
+  <TRow>
+    <TCol :span="24">
+      <header>页面头部</header>
+    </TCol>
+  </TRow>
+  
+  <TRow :gutter="16">
+    <TCol :span="24" :lg="6">
+      <aside>侧边栏</aside>
+    </TCol>
+    <TCol :span="24" :lg="18">
+      <main>主内容区</main>
+    </TCol>
+  </TRow>
+  
+  <TRow>
+    <TCol :span="24">
+      <footer>页面底部</footer>
+    </TCol>
+  </TRow>
+</template>
+```
+
+### 3. 性能优化
+
+- 避免在循环中动态计算复杂的响应式配置
+- 对于固定布局，直接使用 `span` 而不是响应式 props
+- 合理使用 `wrap` 属性控制换行行为
+
+### 4. 间距管理
+
+```vue
+<template>
+  <!-- 推荐：统一使用 gutter 管理间距 -->
+  <TRow :gutter="[16, 16]">
+    <TCol :span="12">内容</TCol>
+    <TCol :span="12">内容</TCol>
+  </TRow>
+
+  <!-- 避免：混用 gutter 和元素 margin -->
+  <!-- 这会导致间距不一致 -->
+</template>
+```
