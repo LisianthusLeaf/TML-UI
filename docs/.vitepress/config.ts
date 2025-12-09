@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'TML UI',
   description: 'A Vue 3 Component Library built with TypeScript',
   lang: 'zh-CN',
+  base: '/TML-UI/',
   
   themeConfig: {
     nav: [
