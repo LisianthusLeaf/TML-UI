@@ -1,6 +1,6 @@
 {
   "name": "tml-ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Vue 3 Component Library built with TypeScript",
   "type": "module",
   "main": "./dist/tml-ui.umd.js",
