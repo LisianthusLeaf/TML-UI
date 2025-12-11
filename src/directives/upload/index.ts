@@ -50,15 +50,16 @@ function handleFileChange(
     const error = validateFiles(files, options)
 
     if (error) {
-      // 验证失败：阻止事件传播并触发错误事件
+      // 验证失败：先触发错误事件，再阻止原始事件传播
+      // 触发错误事件
+      emitEvent(el, 'upload-error', error as UploadErrorEventDetail)
+      
+      // 阻止事件传播并取消默认行为
       event.stopPropagation()
       event.preventDefault()
       
       // 清空 input value，允许重新选择相同文件
       input.value = ''
-
-      // 触发错误事件
-      emitEvent(el, 'upload-error', error as UploadErrorEventDetail)
     } else {
       // 验证成功：触发成功事件
       emitEvent(el, 'upload-success', files as UploadSuccessEventDetail)
@@ -86,8 +87,8 @@ function bindToInput(el: HTMLElement, input: HTMLInputElement, state: UploadDire
   const handler = handleFileChange(el, input, state.options)
   state.changeHandler = handler
   
-  // 使用捕获阶段确保在其他事件处理器之前执行
-  input.addEventListener('change', handler, true)
+  // 绑定事件处理器
+  input.addEventListener('change', handler)
 }
 
 /**
@@ -179,7 +180,7 @@ function cleanupUploadDirective(el: HTMLElement) {
   if (state.changeHandler) {
     const input = findFileInput(el) || state.hiddenInput
     if (input) {
-      input.removeEventListener('change', state.changeHandler, true)
+      input.removeEventListener('change', state.changeHandler)
     }
   }
 

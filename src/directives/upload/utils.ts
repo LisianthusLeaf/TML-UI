@@ -8,17 +8,19 @@ import { UploadErrorType } from './types'
 /**
  * 验证文件大小
  * @param file 文件对象
- * @param maxSize 最大文件大小（MB）
+ * @param maxSize 最大文件大小（KB）
  * @returns 验证结果，成功返回 null，失败返回错误对象
  */
 export function validateFileSize(file: File, maxSize: number): UploadError | null {
-  const fileSizeInMB = file.size / (1024 * 1024)
+  const fileSizeInKB = file.size / 1024
+  const maxSizeInMB = (maxSize / 1024).toFixed(2)
+  const fileSizeInMB = (fileSizeInKB / 1024).toFixed(2)
 
-  if (fileSizeInMB > maxSize) {
+  if (fileSizeInKB > maxSize) {
     return {
       type: UploadErrorType.FILE_TOO_LARGE,
       file,
-      message: `文件 "${file.name}" 大小为 ${fileSizeInMB.toFixed(2)}MB，超过限制 ${maxSize}MB`
+      message: `文件 "${file.name}" 大小为 ${fileSizeInMB}MB，超过限制 ${maxSizeInMB}MB`
     }
   }
 
