@@ -110,6 +110,70 @@
           <p v-if="clickCount > 0" class="click-info">已点击 {{ clickCount }} 次</p>
         </div>
       </section>
+      
+      <section class="demo-section">
+        <h2>v-upload 指令演示</h2>
+
+        <div class="demo-group">
+          <h3>基础图片上传</h3>
+          <input 
+            type="file" 
+            v-upload="{ maxSize: 5120, accept: ['image/*'] }"
+            @upload-success="handleImageUpload"
+            @upload-error="showUploadError"
+            class="file-input"
+          />
+          <p v-if="uploadError" class="upload-error">{{ uploadError }}</p>
+          <p v-if="uploadedFileName" class="upload-success">
+            已选择: {{ uploadedFileName }}
+          </p>
+        </div>
+
+        <div class="demo-group">
+          <h3>多文件上传</h3>
+          <input 
+            type="file" 
+            multiple
+            v-upload="{
+              maxSize: 10240,
+              accept: ['application/pdf', 'image/*'],
+              multiple: true,
+              maxFiles: 5
+            }"
+            @upload-success="handleMultiUpload"
+            @upload-error="showUploadError"
+            class="file-input"
+          />
+          <p v-if="uploadError" class="upload-error">{{ uploadError }}</p>
+          <ul v-if="uploadedFiles.length" class="file-list">
+            <li v-for="file in uploadedFiles" :key="file.name">
+              {{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)
+            </li>
+          </ul>
+        </div>
+
+        <div class="demo-group">
+          <h3>编程式上传（按钮触发）</h3>
+          <tml-button 
+            type="primary"
+            v-upload="{
+              maxSize: 20480,
+              accept: ['video/*'],
+              multiple: true,
+              maxFiles: 3
+            }"
+            @upload-success="handleVideoUpload"
+            @upload-error="showUploadError"
+          >
+            📹 选择视频文件
+          </tml-button>
+          <p v-if="uploadError" class="upload-error">{{ uploadError }}</p>
+          <p v-if="videoCount > 0" class="upload-success">
+            已选择 {{ videoCount }} 个视频文件
+          </p>
+        </div>
+      </section>
+      
       <section class="demo-section">
         <h2>瀑布流演示</h2>
 
@@ -279,6 +343,39 @@ const handleReachBottom = (payload: any) => {
 const responsiveColumns = ref(5)
 const responsiveGap = ref(16)
 const fixedItems = ref<WaterfallItem[]>(generateItems(15))
+
+// v-upload 指令演示
+const uploadError = ref('')
+const uploadedFileName = ref('')
+const uploadedFiles = ref<File[]>([])
+const videoCount = ref(0)
+
+const handleImageUpload = (event: CustomEvent) => {
+  const files = event.detail as FileList
+  if (files.length > 0) {
+    uploadedFileName.value = files[0].name
+    uploadError.value = ''
+  }
+}
+
+const handleMultiUpload = (event: CustomEvent) => {
+  const files = Array.from(event.detail as FileList)
+  uploadedFiles.value = files
+  uploadError.value = ''
+}
+
+const handleVideoUpload = (event: CustomEvent) => {
+  const files = event.detail as FileList
+  videoCount.value = files.length
+  uploadError.value = ''
+}
+
+const showUploadError = (event: CustomEvent) => {
+  uploadError.value = event.detail.message
+  uploadedFileName.value = ''
+  uploadedFiles.value = []
+  videoCount.value = 0
+}
 </script>
 
 <style scoped>
@@ -446,6 +543,51 @@ const fixedItems = ref<WaterfallItem[]>(generateItems(15))
 .description {
   color: var(--tml-text-color-secondary);
   margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* v-upload 指令演示样式 */
+.file-input {
+  padding: 10px;
+  border: 2px dashed var(--tml-border-color-light);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  width: 100%;
+  font-size: 14px;
+}
+
+.file-input:hover {
+  border-color: var(--tml-color-primary);
+}
+
+.upload-error {
+  color: var(--tml-color-danger);
+  margin-top: 12px;
+  padding: 10px;
+  background: #fef0f0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.upload-success {
+  color: var(--tml-color-success);
+  margin-top: 12px;
+  padding: 10px;
+  background: #f0f9ff;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.file-list {
+  margin-top: 12px;
+  padding-left: 24px;
+  list-style: disc;
+}
+
+.file-list li {
+  margin: 6px 0;
+  color: var(--tml-text-color-regular);
   font-size: 14px;
 }
 </style>

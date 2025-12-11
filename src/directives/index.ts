@@ -1,4 +1,12 @@
 // 自定义指令注册入口
-// 暂无指令实现，保留空导出以支持未来扩展
+
+export { vUpload } from './upload'
+export type {
+  UploadOptions,
+  UploadError,
+  UploadErrorType,
+  UploadSuccessEventDetail,
+  UploadErrorEventDetail
+} from './upload/types'
 
 export default {}

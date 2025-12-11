@@ -9,7 +9,8 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '指南', link: '/guide/' },
-      { text: '组件', link: '/components/button' }
+      { text: '组件', link: '/components/button' },
+      { text: '指令', link: '/directives/upload' }
     ],
 
     sidebar: {
@@ -34,6 +35,14 @@ export default defineConfig({
           items: [
             { text: 'Grid 栅格', link: '/components/grid' },
             { text: 'Waterfall 瀑布流', link: '/components/waterfall' }
+          ]
+        }
+      ],
+      '/directives/': [
+        {
+          text: '指令',
+          items: [
+            { text: 'v-upload 上传', link: '/directives/upload' }
           ]
         }
       ]
