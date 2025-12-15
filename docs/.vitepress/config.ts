@@ -1,7 +1,7 @@
 /*
  * @Author: Dhx
  * @Date: 2025-12-08 14:10:43
- * @Description: 
+ * @Description:
  * @FilePath: \TmlUI\docs\.vitepress\config.ts
  */
 import { defineConfig } from 'vitepress'
@@ -11,7 +11,7 @@ export default defineConfig({
   description: 'A Vue 3 Component Library built with TypeScript',
   lang: 'zh-CN',
   base: '/TML-UI/',
-  
+
   themeConfig: {
     nav: [
       { text: '指南', link: '/guide/' },
@@ -32,9 +32,7 @@ export default defineConfig({
       '/components/': [
         {
           text: '基础组件',
-          items: [
-            { text: 'Button 按钮', link: '/components/button' }
-          ]
+          items: [{ text: 'Button 按钮', link: '/components/button' }]
         },
         {
           text: '布局组件',
@@ -48,15 +46,14 @@ export default defineConfig({
         {
           text: '指令',
           items: [
-            { text: 'v-upload 上传', link: '/directives/upload' }
+            { text: 'v-upload 上传', link: '/directives/upload' },
+            { text: 'v-permission 权限', link: '/directives/permission' }
           ]
         }
       ]
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/Time-Machine-Lab/TML-UI' }
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/Time-Machine-Lab/TML-UI' }],
 
     footer: {
       message: 'Released under the MIT License.',

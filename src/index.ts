@@ -30,7 +30,7 @@ const install = (app: App): void => {
 export { TmlButton, TmlRow, TmlCol, TmlWaterfall }
 
 // 导出指令
-export { vUpload } from './directives'
+export { vUpload, createPermissionDirective, DEFAULT_PERMISSION_REPLACE_ATTR } from './directives'
 
 // 导出类型
 export type { ButtonProps, ButtonEmits } from './components/button/tml-button.vue'
@@ -42,6 +42,19 @@ export type {
   UploadErrorType,
   UploadSuccessEventDetail,
   UploadErrorEventDetail
+} from './directives'
+
+export type {
+  PermissionKey,
+  PermissionLevel,
+  PermissionMode,
+  PermissionBehavior,
+  PermissionRule,
+  PermissionRules,
+  ResolvePermission,
+  ResolvePermissionResult,
+  PermissionReplaceOptions,
+  CreatePermissionDirectiveOptions
 } from './directives'
 
 // 默认导出，用于全局注册
