@@ -3,6 +3,7 @@ import TmlButton from './components/button'
 import { TmlRow, TmlCol } from './components/grid'
 import TmlWaterfall from './components/list/waterfall'
 import { vUpload } from './directives'
+import { createHumanCaptcha } from './human-captcha-modal'
 import './styles/variables.css'
 import './styles/base.css'
 
@@ -28,6 +29,9 @@ const install = (app: App): void => {
 
 // 导出单个组件
 export { TmlButton, TmlRow, TmlCol, TmlWaterfall }
+
+// 导出人机校验弹窗（程序化 API）
+export { createHumanCaptcha }
 
 // 导出指令
 export { vUpload, createPermissionDirective, DEFAULT_PERMISSION_REPLACE_ATTR } from './directives'
@@ -56,6 +60,19 @@ export type {
   PermissionReplaceOptions,
   CreatePermissionDirectiveOptions
 } from './directives'
+
+export type {
+  HumanCaptchaInstance,
+  HumanCaptchaOptions,
+  HumanCaptchaTextOptions,
+  HumanCaptchaPositionOptions,
+  HumanCaptchaAntiAutomationOptions,
+  HumanCaptchaChallengeOption,
+  HumanCaptchaChallengeFactory,
+  HumanCaptchaChallengeContext,
+  HumanCaptchaChallengeHandle,
+  HumanCaptchaBooleanResult
+} from './human-captcha-modal'
 
 // 默认导出，用于全局注册
 export default {

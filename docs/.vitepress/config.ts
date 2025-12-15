@@ -40,6 +40,10 @@ export default defineConfig({
             { text: 'Grid 栅格', link: '/components/grid' },
             { text: 'Waterfall 瀑布流', link: '/components/waterfall' }
           ]
+        },
+        {
+          text: '工具能力',
+          items: [{ text: 'Human Captcha 人机校验弹窗', link: '/components/human-captcha-modal' }]
         }
       ],
       '/directives/': [

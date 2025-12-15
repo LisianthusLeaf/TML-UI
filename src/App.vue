@@ -236,6 +236,35 @@
         </div>
       </section>
 
+      <section class="demo-section">
+        <h2>Human Captcha 人机校验弹窗演示</h2>
+
+        <div class="demo-group">
+          <h3>程序化调用</h3>
+          <p class="description">
+            通过 <code>createHumanCaptcha().verify()</code> 触发验证码弹窗，返回 <code>Promise&lt;boolean&gt;</code>。
+          </p>
+
+          <div class="button-row">
+            <tml-button type="primary" :loading="captchaVerifying" @click="openCaptcha('default')">
+              打开验证码（默认）
+            </tml-button>
+            <tml-button :disabled="captchaVerifying" @click="openCaptcha('strict')">
+              打开验证码（更严格）
+            </tml-button>
+          </div>
+
+          <p v-if="captchaError" class="captcha-result captcha-result--error">{{ captchaError }}</p>
+          <p
+            v-else-if="captchaResult !== null"
+            class="captcha-result"
+            :class="captchaResult ? 'captcha-result--ok' : 'captcha-result--cancel'"
+          >
+            {{ captchaResult ? '验证通过' : '已取消/关闭/超时' }}
+          </p>
+        </div>
+      </section>
+
       <section class="demo-section" v-if="false">
         <h2>瀑布流演示</h2>
 
@@ -320,11 +349,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import TmlButton from './components/button/tml-button.vue'
 import { TmlRow, TmlCol } from './components/grid'
 import { TmlWaterfall } from './components/list/waterfall'
 import { createPermissionDirective } from './directives/permission'
+import { createHumanCaptcha, type HumanCaptchaInstance } from './human-captcha-modal'
 
 const clickCount = ref(0)
 
@@ -490,9 +520,57 @@ const vPermission = createPermissionDirective<PricePermissionLevel>({
       }
     }
   },
-    resolvePermission: (_key) => {
+  resolvePermission: (_key) => {
     return pricePermissionLevel.value
   }
+})
+
+// Human Captcha 演示
+const captchaVerifying = ref(false)
+const captchaResult = ref<boolean | null>(null)
+const captchaError = ref('')
+const activeCaptcha = ref<HumanCaptchaInstance | null>(null)
+
+type CaptchaPreset = 'default' | 'strict'
+
+const openCaptcha = async (preset: CaptchaPreset) => {
+  if (captchaVerifying.value) return
+
+  captchaError.value = ''
+  captchaResult.value = null
+  captchaVerifying.value = true
+
+  try {
+    const captcha =
+      preset === 'strict'
+        ? createHumanCaptcha({
+            text: {
+              title: '安全校验',
+              message: '请完成验证（更严格模式）',
+              buttonLabel: '我不是机器人'
+            },
+            antiAutomation: {
+              minSolveTimeMs: 1200,
+              requirePointerTravelPx: 140
+            },
+            timeoutMs: 10000
+          })
+        : createHumanCaptcha()
+
+    activeCaptcha.value = captcha
+    const ok = await captcha.verify()
+    captchaResult.value = ok
+  } catch (error) {
+    captchaError.value = error instanceof Error ? error.message : String(error)
+  } finally {
+    activeCaptcha.value = null
+    captchaVerifying.value = false
+  }
+}
+
+onBeforeUnmount(() => {
+  activeCaptcha.value?.destroy()
+  activeCaptcha.value = null
 })
 </script>
 
@@ -664,6 +742,24 @@ const vPermission = createPermissionDirective<PricePermissionLevel>({
   color: var(--tml-text-color-secondary);
   margin-bottom: 16px;
   font-size: 14px;
+}
+
+.captcha-result {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--tml-text-color-regular);
+}
+
+.captcha-result--ok {
+  color: var(--tml-color-success);
+}
+
+.captcha-result--cancel {
+  color: var(--tml-text-color-secondary);
+}
+
+.captcha-result--error {
+  color: var(--tml-color-danger);
 }
 
 /* v-upload 指令演示样式 */
