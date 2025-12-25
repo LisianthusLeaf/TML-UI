@@ -73,6 +73,33 @@ const verify = async () => {
 | challenge      | 挑战类型（可插拔）     | `HumanCaptchaChallengeOption`       | `click-button`                                        |
 | security       | 安全相关配置           | `HumanCaptchaSecurityOptions`       | `{ shadowRootMode: 'closed' }`                        |
 | timeoutMs      | 超时自动取消           | `number`                            | `0`（不超时）                                         |
+| closable       | 是否可被用户关闭       | `boolean`                           | `true`                                                |
+
+### closable
+
+控制用户是否可以通过交互关闭弹窗：
+
+- 当 `closable: true`（默认）：用户可以通过 Escape 键、点击遮罩层或点击关闭按钮（×）关闭弹窗
+- 当 `closable: false`：禁用以上所有关闭方式，弹窗右上角不显示关闭按钮，仅能通过 `destroy()` API 关闭
+
+适用场景：敏感操作确认、强制验证流程等需要用户必须完成验证的场景。
+
+```ts
+import { createHumanCaptcha } from 'tml-ui'
+
+// 强制用户完成验证，不可关闭
+const captcha = createHumanCaptcha({
+  closable: false,
+  timeoutMs: 30000 // 建议设置超时，避免用户永久卡住
+})
+
+const ok = await captcha.verify()
+if (ok) {
+  // 用户完成了验证
+} else {
+  // 超时或被 destroy() 取消
+}
+```
 
 ### canvas
 

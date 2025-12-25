@@ -89,7 +89,7 @@ describe('human-captcha-modal', () => {
     const shadow = (host as any).shadowRoot as ShadowRoot
     expect(shadow).toBeTruthy()
 
-    const button = shadow.querySelector('button') as HTMLButtonElement
+    const button = shadow.querySelector('button[data-captcha-verify]') as HTMLButtonElement
     expect(button).toBeTruthy()
 
     button.click()
@@ -185,7 +185,7 @@ describe('human-captcha-modal', () => {
 
     const host = document.body.lastElementChild as HTMLElement
     const shadow = (host as any).shadowRoot as ShadowRoot
-    const button = shadow.querySelector('button') as HTMLButtonElement
+    const button = shadow.querySelector('button[data-captcha-verify]') as HTMLButtonElement
 
     let settled = false
     promise.then(() => {
@@ -220,5 +220,191 @@ describe('human-captcha-modal', () => {
 
     await expect(captcha.verify()).resolves.toBe(true)
     expect(called).toHaveBeenCalledTimes(1)
+  })
+
+  describe('closable 配置项', () => {
+    it('closable: true（默认）时，Escape 键可以关闭弹窗', async () => {
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 }
+      })
+
+      const promise = captcha.verify()
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      await expect(promise).resolves.toBe(false)
+    })
+
+    it('closable: true 时，点击遮罩层可以关闭弹窗', async () => {
+      const originalAttachShadow = HTMLElement.prototype.attachShadow
+      vi.spyOn(HTMLElement.prototype, 'attachShadow').mockImplementation(function (
+        this: HTMLElement,
+        init
+      ) {
+        return originalAttachShadow.call(this, { ...init, mode: 'open' })
+      })
+
+      installCanvasMock()
+
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 },
+        closable: true
+      })
+
+      const promise = captcha.verify()
+
+      const host = document.body.lastElementChild as HTMLElement
+      const shadow = (host as any).shadowRoot as ShadowRoot
+      const overlay = shadow.querySelector('div > div') as HTMLElement
+      overlay.click()
+
+      await expect(promise).resolves.toBe(false)
+    })
+
+    it('closable: true 时，显示关闭按钮并可点击关闭', async () => {
+      const originalAttachShadow = HTMLElement.prototype.attachShadow
+      vi.spyOn(HTMLElement.prototype, 'attachShadow').mockImplementation(function (
+        this: HTMLElement,
+        init
+      ) {
+        return originalAttachShadow.call(this, { ...init, mode: 'open' })
+      })
+
+      installCanvasMock()
+
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 },
+        closable: true
+      })
+
+      const promise = captcha.verify()
+
+      const host = document.body.lastElementChild as HTMLElement
+      const shadow = (host as any).shadowRoot as ShadowRoot
+      const dialog = shadow.querySelector('[role="dialog"]') as HTMLElement
+      const closeButton = dialog.querySelector('button[aria-label="关闭"]') as HTMLButtonElement
+
+      expect(closeButton).toBeTruthy()
+      closeButton.click()
+
+      await expect(promise).resolves.toBe(false)
+    })
+
+    it('closable: false 时，Escape 键无法关闭弹窗', async () => {
+      const originalAttachShadow = HTMLElement.prototype.attachShadow
+      vi.spyOn(HTMLElement.prototype, 'attachShadow').mockImplementation(function (
+        this: HTMLElement,
+        init
+      ) {
+        return originalAttachShadow.call(this, { ...init, mode: 'open' })
+      })
+
+      installCanvasMock()
+
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 },
+        closable: false
+      })
+
+      const promise = captcha.verify()
+
+      let settled = false
+      promise.then(() => {
+        settled = true
+      })
+
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      await flush()
+      expect(settled).toBe(false)
+
+      // 弹窗仍然存在
+      expect(document.body.lastElementChild).toBeTruthy()
+
+      // 使用 destroy 关闭
+      captcha.destroy()
+      await expect(promise).resolves.toBe(false)
+    })
+
+    it('closable: false 时，点击遮罩层无法关闭弹窗', async () => {
+      const originalAttachShadow = HTMLElement.prototype.attachShadow
+      vi.spyOn(HTMLElement.prototype, 'attachShadow').mockImplementation(function (
+        this: HTMLElement,
+        init
+      ) {
+        return originalAttachShadow.call(this, { ...init, mode: 'open' })
+      })
+
+      installCanvasMock()
+
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 },
+        closable: false
+      })
+
+      const promise = captcha.verify()
+
+      let settled = false
+      promise.then(() => {
+        settled = true
+      })
+
+      const host = document.body.lastElementChild as HTMLElement
+      const shadow = (host as any).shadowRoot as ShadowRoot
+      const overlay = shadow.querySelector('div > div') as HTMLElement
+      overlay.click()
+
+      await flush()
+      expect(settled).toBe(false)
+
+      // 弹窗仍然存在
+      expect(document.body.lastElementChild).toBeTruthy()
+
+      // 使用 destroy 关闭
+      captcha.destroy()
+      await expect(promise).resolves.toBe(false)
+    })
+
+    it('closable: false 时，不显示关闭按钮', async () => {
+      const originalAttachShadow = HTMLElement.prototype.attachShadow
+      vi.spyOn(HTMLElement.prototype, 'attachShadow').mockImplementation(function (
+        this: HTMLElement,
+        init
+      ) {
+        return originalAttachShadow.call(this, { ...init, mode: 'open' })
+      })
+
+      installCanvasMock()
+
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 },
+        closable: false
+      })
+
+      const promise = captcha.verify()
+
+      const host = document.body.lastElementChild as HTMLElement
+      const shadow = (host as any).shadowRoot as ShadowRoot
+      const dialog = shadow.querySelector('[role="dialog"]') as HTMLElement
+      const closeButton = dialog.querySelector('button[aria-label="关闭"]')
+
+      expect(closeButton).toBeNull()
+
+      captcha.destroy()
+      await expect(promise).resolves.toBe(false)
+    })
+
+    it('closable: false + destroy() 仍然可以关闭弹窗（API 层逃生舱）', async () => {
+      const captcha = createHumanCaptcha({
+        antiAutomation: { minSolveTimeMs: 0, requirePointerTravelPx: 0 },
+        closable: false
+      })
+
+      const promise = captcha.verify()
+
+      // destroy() 应该仍然可用
+      captcha.destroy()
+      await expect(promise).resolves.toBe(false)
+
+      // 弹窗应该已被移除
+      expect(document.body.childElementCount).toBe(0)
+    })
   })
 })

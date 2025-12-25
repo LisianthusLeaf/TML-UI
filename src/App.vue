@@ -218,8 +218,12 @@
           <h3>效果预览</h3>
 
           <div class="button-row">
-            <tml-button type="primary" v-permission="'order.create'">创建订单（无权限隐藏）</tml-button>
-            <tml-button type="danger" v-permission="'order.delete'">删除订单（无权限禁用）</tml-button>
+            <tml-button type="primary" v-permission="'order.create'"
+              >创建订单（无权限隐藏）</tml-button
+            >
+            <tml-button type="danger" v-permission="'order.delete'"
+              >删除订单（无权限禁用）</tml-button
+            >
           </div>
 
           <div class="permission-card" v-permission="'product.price'">
@@ -242,7 +246,8 @@
         <div class="demo-group">
           <h3>程序化调用</h3>
           <p class="description">
-            通过 <code>createHumanCaptcha().verify()</code> 触发验证码弹窗，返回 <code>Promise&lt;boolean&gt;</code>。
+            通过 <code>createHumanCaptcha().verify()</code> 触发验证码弹窗，返回
+            <code>Promise&lt;boolean&gt;</code>。
           </p>
 
           <div class="button-row">

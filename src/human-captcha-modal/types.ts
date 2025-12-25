@@ -81,6 +81,12 @@ export interface HumanCaptchaOptions {
   security?: HumanCaptchaSecurityOptions
   /** If > 0, auto-cancel after timeout. */
   timeoutMs?: number
+  /**
+   * Whether the modal can be closed by user interaction (Escape key, overlay click, close button).
+   * When false, only `destroy()` can close the modal programmatically.
+   * @default true
+   */
+  closable?: boolean
 }
 
 export interface HumanCaptchaInstance {

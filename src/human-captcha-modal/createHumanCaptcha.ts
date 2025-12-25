@@ -32,7 +32,8 @@ const defaults = {
   security: {
     shadowRootMode: 'closed' as const
   },
-  timeoutMs: 0
+  timeoutMs: 0,
+  closable: true
 }
 
 const normalizeChallenge = (
@@ -67,7 +68,8 @@ export const createHumanCaptcha = (options: HumanCaptchaOptions = {}): HumanCapt
     canvas: options.canvas ?? {},
     challenge: normalizeChallenge(options.challenge),
     security: { ...defaults.security, ...(options.security ?? {}) },
-    timeoutMs: options.timeoutMs ?? defaults.timeoutMs
+    timeoutMs: options.timeoutMs ?? defaults.timeoutMs,
+    closable: options.closable ?? defaults.closable
   }
 
   const safeResolve = (value: boolean): void => {
@@ -136,14 +138,58 @@ export const createHumanCaptcha = (options: HumanCaptchaOptions = {}): HumanCapt
       `height:${merged.size.heightPx}px`,
       'background-color:var(--tml-bg-color-overlay)',
       'border:1px solid var(--tml-border-color-light)',
-      'border-radius:var(--tml-border-radius-base)',
-      'box-shadow:var(--tml-box-shadow-light)',
-      'padding:16px',
+      'border-radius:12px',
+      'box-shadow:0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)',
+      'padding:24px',
       'display:flex',
       'flex-direction:column',
-      'gap:12px',
+      'align-items:center',
+      'gap:16px',
       'user-select:none'
     ].join(';')
+
+    // Close button (shown when closable is true)
+    let closeButton: HTMLButtonElement | null = null
+    if (merged.closable) {
+      closeButton = document.createElement('button')
+      closeButton.type = 'button'
+      closeButton.setAttribute('aria-label', '关闭')
+      closeButton.style.cssText = [
+        'position:absolute',
+        'top:12px',
+        'right:12px',
+        'width:28px',
+        'height:28px',
+        'border:none',
+        'background:transparent',
+        'cursor:pointer',
+        'display:flex',
+        'align-items:center',
+        'justify-content:center',
+        'border-radius:50%',
+        'color:var(--tml-text-color-secondary)',
+        'font-size:20px',
+        'font-weight:300',
+        'line-height:1',
+        'transition:background-color 0.2s, color 0.2s'
+      ].join(';')
+      closeButton.textContent = '×'
+      closeButton.addEventListener('mouseenter', () => {
+        closeButton!.style.backgroundColor = 'var(--tml-fill-color-light)'
+        closeButton!.style.color = 'var(--tml-text-color-primary)'
+      })
+      closeButton.addEventListener('mouseleave', () => {
+        closeButton!.style.backgroundColor = 'transparent'
+        closeButton!.style.color = 'var(--tml-text-color-secondary)'
+      })
+      const onCloseClick = (): void => {
+        safeResolve(false)
+        destroy()
+      }
+      closeButton.addEventListener('click', onCloseClick)
+      cleanupFns.push(() => closeButton?.removeEventListener('click', onCloseClick))
+      dialog.appendChild(closeButton)
+    }
 
     const titleCanvas = document.createElement('canvas')
     titleCanvas.setAttribute('aria-hidden', 'true')
@@ -157,18 +203,40 @@ export const createHumanCaptcha = (options: HumanCaptchaOptions = {}): HumanCapt
     const button = document.createElement('button')
     button.type = 'button'
     button.setAttribute('aria-label', merged.text.buttonLabel)
+    button.setAttribute('data-captcha-verify', '')
     button.style.cssText = [
       'width:240px',
-      'height:44px',
-      'border-radius:var(--tml-border-radius-base)',
-      'border:1px solid var(--tml-border-color)',
+      'height:48px',
+      'border-radius:8px',
+      'border:none',
       'background-color:var(--tml-color-primary)',
       'cursor:pointer',
       'display:flex',
       'align-items:center',
       'justify-content:center',
-      'padding:0'
+      'padding:0',
+      'transition:background-color 0.2s, transform 0.15s, box-shadow 0.2s',
+      'box-shadow:0 2px 8px rgba(64, 158, 255, 0.3)'
     ].join(';')
+
+    // Add hover/active states
+    button.addEventListener('mouseenter', () => {
+      button.style.backgroundColor = 'var(--tml-color-primary-light-3)'
+      button.style.boxShadow = '0 4px 12px rgba(64, 158, 255, 0.4)'
+    })
+    button.addEventListener('mouseleave', () => {
+      button.style.backgroundColor = 'var(--tml-color-primary)'
+      button.style.boxShadow = '0 2px 8px rgba(64, 158, 255, 0.3)'
+      button.style.transform = 'scale(1)'
+    })
+    button.addEventListener('mousedown', () => {
+      button.style.transform = 'scale(0.97)'
+      button.style.backgroundColor = 'var(--tml-color-primary-dark-2)'
+    })
+    button.addEventListener('mouseup', () => {
+      button.style.transform = 'scale(1)'
+      button.style.backgroundColor = 'var(--tml-color-primary-light-3)'
+    })
 
     const buttonCanvas = document.createElement('canvas')
     buttonCanvas.setAttribute('aria-hidden', 'true')
@@ -195,17 +263,19 @@ export const createHumanCaptcha = (options: HumanCaptchaOptions = {}): HumanCapt
 
     hostEl = host
 
-    // Cancel via overlay click
+    // Cancel via overlay click (only when closable is true)
     const onOverlayClick = (): void => {
+      if (!merged.closable) return
       safeResolve(false)
       destroy()
     }
     overlay.addEventListener('click', onOverlayClick)
     cleanupFns.push(() => overlay.removeEventListener('click', onOverlayClick))
 
-    // Cancel via Escape
+    // Cancel via Escape (only when closable is true)
     const onKeyDown = (ev: KeyboardEvent): void => {
       if (ev.key === 'Escape') {
+        if (!merged.closable) return
         ev.preventDefault()
         safeResolve(false)
         destroy()
