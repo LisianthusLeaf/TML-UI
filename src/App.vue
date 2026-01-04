@@ -199,7 +199,18 @@
               >
                 {{ hasPermissionKey('order.delete') ? '已授权' : '未授权' }}
               </tml-button>
-              <span class="permission-hint">（whenDenied: disable）</span>
+              <span class="permission-hint">（whenDenied: disable + disableTooltip）</span>
+            </div>
+
+            <div class="permission-control">
+              <span class="permission-label">product.discountPrice:</span>
+              <tml-button
+                :type="hasPermissionKey('product.discountPrice') ? 'success' : 'warning'"
+                @click="togglePermissionKey('product.discountPrice')"
+              >
+                {{ hasPermissionKey('product.discountPrice') ? '已授权' : '未授权' }}
+              </tml-button>
+              <span class="permission-hint">（whenDenied: replace + showOriginal/strikeOriginal）</span>
             </div>
 
             <div class="permission-control">
@@ -235,6 +246,18 @@
               <span class="permission-label">价格:</span>
               <span data-permission-replace>{{ productPriceText }}</span>
               <span class="permission-hint">（仅替换带 data-permission-replace 的文本）</span>
+            </p>
+          </div>
+
+          <div class="permission-card" v-permission="'product.discountPrice'">
+            <p class="permission-row">
+              <span class="permission-label">商品:</span>
+              <span>示例商品</span>
+            </p>
+            <p class="permission-row">
+              <span class="permission-label">促销价:</span>
+              <span data-permission-replace>{{ productOriginalPriceText }}</span>
+              <span class="permission-hint">（无权限时：原价划线 + 展示替换价）</span>
             </p>
           </div>
         </div>
@@ -489,6 +512,8 @@ type PricePermissionLevel = 'none' | 'masked' | 'full'
 const grantedPermissionKeys = ref<string[]>(['order.create', 'order.delete'])
 const pricePermissionLevel = ref<PricePermissionLevel>('none')
 const productPriceText = ref('¥ 199.00')
+const productOriginalPriceText = ref('¥ 199.00')
+const productDiscountPriceText = ref('¥ 159.00')
 
 const hasPermissionKey = (key: string) => grantedPermissionKeys.value.includes(key)
 
@@ -503,18 +528,13 @@ const togglePermissionKey = (key: string) => {
 
 const vPermission = createPermissionDirective<PricePermissionLevel>({
   rules: {
-    'order.create': {
-      byLevel: {
-        none: { mode: 'hide' },
-        masked: { mode: 'disable' },
-        full: { mode: 'allow' }
-      }
-    },
+    'order.create': { whenDenied: { mode: 'hide' } },
     'order.delete': {
-      byLevel: {
-        none: { mode: 'disable' },
-        masked: { mode: 'disable' },
-        full: { mode: 'allow' }
+      whenDenied: {
+        mode: 'disable',
+        disableTooltip: {
+          text: '无权限删除'
+        }
       }
     },
     'product.price': {
@@ -523,10 +543,19 @@ const vPermission = createPermissionDirective<PricePermissionLevel>({
         masked: { mode: 'replace', replaceText: '**.**' },
         full: { mode: 'allow' }
       }
+    },
+    'product.discountPrice': {
+      whenDenied: {
+        mode: 'replace',
+        replaceText: productDiscountPriceText.value,
+        showOriginal: true,
+        strikeOriginal: true
+      }
     }
   },
-  resolvePermission: (_key) => {
-    return pricePermissionLevel.value
+  resolvePermission: (key) => {
+    if (key === 'product.price') return pricePermissionLevel.value
+    return hasPermissionKey(key)
   }
 })
 

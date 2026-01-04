@@ -104,6 +104,50 @@ createPermissionDirective({
 })
 ```
 
+### 展示原文 + 删除线（showOriginal / strikeOriginal）
+
+在常见的“原价划线 + 折扣价”场景下，可以在 `replace` 模式启用“展示原文”能力：
+
+```ts
+createPermissionDirective({
+  rules: {
+    'product.price': {
+      whenDenied: {
+        mode: 'replace',
+        replaceText: '80',
+        showOriginal: true,
+        strikeOriginal: true
+      }
+    }
+  },
+  resolvePermission: () => false
+})
+```
+
+> 注意：该能力面向 **文本展示** 的 replace 目标节点；若目标节点包含复杂子树（组件/事件/多层 DOM），替换与恢复会退化为 `textContent` 模型，原子节点结构会丢失。
+
+## 禁用提示（disableTooltip）
+
+在 `disable` 模式下，可以配置 denied tooltip，在 hover/focus 时展示提示文案：
+
+```ts
+createPermissionDirective({
+  rules: {
+    'order.submit': {
+      whenDenied: {
+        mode: 'disable',
+        disableTooltip: {
+          text: '无权限操作'
+          // class?: 'your-class'
+          // style?: { maxWidth: '240px' }
+        }
+      }
+    }
+  },
+  resolvePermission: () => false
+})
+```
+
 ## 权限等级（byLevel）
 
 当你的权限解析器返回“等级”时（例如 `none/masked/full`），可以按等级分别配置行为：
@@ -148,7 +192,7 @@ createPermissionDirective({
 ## 行为说明
 
 - `hide`：设置宿主元素 `display: none`
-- `disable`：保持可见但不可交互（`cursor: not-allowed` + `aria-disabled="true"`；并在捕获阶段拦截 `click` 事件以阻止默认行为与事件传播；对可禁用表单控件会设置 `disabled=true`）
+- `disable`：保持可见但不可交互（`cursor: not-allowed` + `aria-disabled="true"`；并在捕获阶段拦截 `click` 事件以阻止默认行为与事件传播；对可禁用表单控件会设置 `disabled=true`；可选 `disableTooltip` 在 hover/focus 时提示原因）
 - `replace`：仅对宿主元素内部带标识属性的子元素设置 `textContent`
 - `allow`：不处理并恢复原始状态
 
@@ -221,6 +265,15 @@ export type PermissionMode = 'allow' | 'hide' | 'disable' | 'replace'
 export interface PermissionBehavior {
   mode: PermissionMode
   replaceText?: string
+
+  disableTooltip?: {
+    text: string
+    class?: string
+    style?: Partial<CSSStyleDeclaration>
+  }
+
+  showOriginal?: boolean
+  strikeOriginal?: boolean
 }
 
 export type PermissionByLevelConfig = Partial<Record<string, PermissionBehavior>>

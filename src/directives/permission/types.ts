@@ -8,9 +8,27 @@ export type PermissionLevel = string | number
 
 export type PermissionMode = 'allow' | 'hide' | 'disable' | 'replace'
 
+export interface PermissionDisableTooltipOptions {
+  /** tooltip 文案（使用 textContent 写入） */
+  text: string
+  /** 可选 class（用于自定义样式） */
+  class?: string
+  /** 可选内联样式（Object.assign 到 tooltipEl.style） */
+  style?: Partial<CSSStyleDeclaration>
+}
+
 export interface PermissionBehavior {
   mode: PermissionMode
   replaceText?: string
+
+  /** disable 模式下可选 tooltip */
+  disableTooltip?: PermissionDisableTooltipOptions
+
+  /** replace 模式下：展示原文 */
+  showOriginal?: boolean
+
+  /** replace 模式下：原文加删除线（需配合 showOriginal） */
+  strikeOriginal?: boolean
 }
 
 export type PermissionByLevelConfig = Partial<Record<string, PermissionBehavior>>

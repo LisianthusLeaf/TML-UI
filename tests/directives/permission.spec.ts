@@ -248,4 +248,103 @@ describe('permission 指令', () => {
     expect(host.style.display).toBe('')
     expect(wrapper.find('#masked').text()).toBe('100')
   })
+
+  it('disable：支持 denied tooltip，且在恢复/卸载时清理', async () => {
+    const allowed = ref(false)
+
+    const vPermission = createPermissionDirective({
+      rules: {
+        'order.submit': {
+          whenDenied: {
+            mode: 'disable',
+            disableTooltip: {
+              text: 'No permission'
+            }
+          }
+        }
+      },
+      resolvePermission: () => allowed.value
+    })
+
+    const wrapper = mount(
+      defineComponent({
+        directives: { permission: vPermission },
+        setup() {
+          return { allowed }
+        },
+        template: `
+          <div>
+            <div id="wrap">
+              <button id="btn" v-permission="'order.submit'">Submit</button>
+            </div>
+            <span class="allowed">{{ allowed }}</span>
+          </div>
+        `
+      })
+    )
+
+    await nextTick()
+
+    await wrapper.find('#wrap').trigger('mouseenter')
+    const tooltip = document.body.querySelector('[data-tml-permission-tooltip="true"]') as
+      | HTMLDivElement
+      | null
+    expect(tooltip?.textContent).toBe('No permission')
+    expect(tooltip?.style.visibility).toBe('visible')
+
+    allowed.value = true
+    await nextTick()
+
+    expect(document.body.querySelector('[data-tml-permission-tooltip="true"]')).toBe(null)
+
+    wrapper.unmount()
+    expect(document.body.querySelector('[data-tml-permission-tooltip="true"]')).toBe(null)
+  })
+
+  it('replace：支持 showOriginal/strikeOriginal，并可恢复原文', async () => {
+    const allowed = ref(false)
+
+    const vPermission = createPermissionDirective({
+      rules: {
+        'product.price': {
+          whenDenied: {
+            mode: 'replace',
+            replaceText: '80',
+            showOriginal: true,
+            strikeOriginal: true
+          }
+        }
+      },
+      resolvePermission: () => allowed.value
+    })
+
+    const wrapper = mount(
+      defineComponent({
+        directives: { permission: vPermission },
+        setup() {
+          return { allowed }
+        },
+        template: `
+          <div v-permission="'product.price'">
+            <span id="masked" data-permission-replace>100</span>
+            <span class="allowed">{{ allowed }}</span>
+          </div>
+        `
+      })
+    )
+
+    await nextTick()
+
+    const maskedEl = wrapper.find('#masked').element as HTMLElement
+    expect(maskedEl.textContent).toBe('100 80')
+
+    const spans = maskedEl.querySelectorAll('span')
+    expect(spans.length).toBe(2)
+    expect((spans[0] as HTMLSpanElement).style.textDecoration).toBe('line-through')
+    expect(spans[1]?.textContent).toBe('80')
+
+    allowed.value = true
+    await nextTick()
+    expect(wrapper.find('#masked').text()).toBe('100')
+  })
 })
