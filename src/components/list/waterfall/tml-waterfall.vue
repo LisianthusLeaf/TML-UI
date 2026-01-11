@@ -114,7 +114,7 @@ function ensureStyles(el: HTMLElement, width: number): void {
 function buildItems(): void {
   if (!containerRef.value) return
   itemsOrder.value = Array.from(containerRef.value.children) as HTMLElement[]
-  itemsOrder.value.forEach((el) => (el.style.transition = 'transform 0.2s ease'))
+  itemsOrder.value.forEach((el) => {el.style.opacity = el.style.opacity || '0'})
 }
 
 /**
@@ -169,6 +169,8 @@ function doLayout(start: number): void {
       el.style.transform = `translate(${left}px, ${top}px)`
       itemMeta.set(el, { col: targetCol, top, height: h })
       cols[targetCol] = top + h + props.gap
+      el.style.transition = 'opacity 0.4s ease'
+      el.style.opacity = '1'
     }
 
     // 设置容器高度
