@@ -1,7 +1,7 @@
 # TML UI
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/%40tml%2Ftml-ui.svg)](https://www.npmjs.com/package/@tml/tml-ui)
+[![npm version](https://img.shields.io/npm/v/%40tml%2Ftml-ui.svg)](https://gaq0noe1.cn-nb1.rainapp.top/@tml/tml-ui)
 
 一个基于 Vue 3 + TypeScript 构建的现代化组件库。
 
