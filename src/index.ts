@@ -2,13 +2,15 @@ import { App } from 'vue'
 import TmlButton from './components/button'
 import { TmlRow, TmlCol } from './components/grid'
 import TmlWaterfall from './components/list/waterfall'
+import TmlSkeleton from './components/skeleton'
+import TmlToast from './components/toast'
 import { vUpload } from './directives'
 import { createHumanCaptcha } from './human-captcha-modal'
 import './styles/variables.css'
 import './styles/base.css'
 
 // 所有组件列表
-const components = [TmlButton, TmlRow, TmlCol, TmlWaterfall]
+const components = [TmlButton, TmlRow, TmlCol, TmlWaterfall, TmlSkeleton, TmlToast]
 
 // 所有指令列表
 const directives = {
@@ -28,7 +30,7 @@ const install = (app: App): void => {
 }
 
 // 导出单个组件
-export { TmlButton, TmlRow, TmlCol, TmlWaterfall }
+export { TmlButton, TmlRow, TmlCol, TmlWaterfall, TmlSkeleton, TmlToast }
 
 // 导出人机校验弹窗（程序化 API）
 export { createHumanCaptcha }
@@ -40,6 +42,8 @@ export { vUpload, createPermissionDirective, DEFAULT_PERMISSION_REPLACE_ATTR } f
 export type { ButtonProps, ButtonEmits } from './components/button/tml-button.vue'
 export type { RowProps } from './components/grid/tml-row.vue'
 export type { ColProps, ColConfig } from './components/grid/tml-col.vue'
+export type { SkeletonProps } from './components/skeleton/tml-skeleton.vue'
+export type { ToastProps } from './components/toast/tml-toast.vue'
 export type {
   UploadOptions,
   UploadError,
